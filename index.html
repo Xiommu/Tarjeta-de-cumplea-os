@@ -477,6 +477,7 @@
       selectedPlayer = p;
 
       document
+        
         .getElementById('player1Btn')
         .classList.toggle('selected', p === 1);
 
@@ -748,10 +749,10 @@
           spawnTimer = 0;
 
           coins.push({
-            x:W,
+            x:W - 150,
             y:H - GROUND_H - 80 - Math.random() * 80,
             r:18,
-            speed:3 + Math.random()
+            speed:6 + Math.random() * 2
           });
 
         }
@@ -763,7 +764,7 @@
             y:H - GROUND_H - 40,
             w:35,
             h:40,
-            speed:4 + Math.random() * 1.5
+            speed:5 + Math.random() * 2
           });
 
         }
