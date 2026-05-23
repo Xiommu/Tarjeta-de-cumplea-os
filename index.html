@@ -270,9 +270,7 @@
 
         <div class="text-center px-6">
 
-          <h1
-            class="game-title text-4xl md:text-6xl mb-4"
-          >
+          <h1 class="game-title text-4xl md:text-6xl mb-4">
             SUPER<br>
             MANUEL BROS
           </h1>
@@ -435,6 +433,18 @@
         flagX = 0,
         reachedFlag = false;
 
+    /* =====================================
+       PARALLAX VARIABLES
+    ===================================== */
+
+    let cloudOffset = 0;
+    let mountainOffset = 0;
+    let groundOffset = 0;
+
+    /* =====================================
+       MESSAGES
+    ===================================== */
+
     const MESSAGES = [
       "A los 30: Achievement unlocked: pagar cuentas a tiempo.",
       "A los 31: Nueva habilidad: dormir temprano.",
@@ -445,8 +455,10 @@
     ];
 
     function resize(){
+
       W = canvas.width = canvas.clientWidth;
       H = canvas.height = canvas.clientHeight;
+
     }
 
     window.addEventListener('resize', resize);
@@ -678,6 +690,18 @@
 
     function update(){
 
+      /* =====================================
+         BACKGROUND MOVEMENT
+      ===================================== */
+
+      cloudOffset += 0.3;
+      mountainOffset += 1;
+      groundOffset += 3;
+
+      /* =====================================
+         PLAYER PHYSICS
+      ===================================== */
+
       mario.vy += 0.7;
       mario.y += mario.vy;
 
@@ -690,6 +714,10 @@
         mario.jumping = false;
 
       }
+
+      /* =====================================
+         FLAG
+      ===================================== */
 
       if(flagVisible && !reachedFlag){
 
@@ -706,6 +734,10 @@
         }
 
       }
+
+      /* =====================================
+         SPAWN
+      ===================================== */
 
       if(!flagVisible){
 
@@ -738,6 +770,10 @@
 
       }
 
+      /* =====================================
+         OBSTACLES
+      ===================================== */
+
       for(let i = obstacles.length - 1; i >= 0; i--){
 
         obstacles[i].x -= obstacles[i].speed;
@@ -747,6 +783,10 @@
         }
 
       }
+
+      /* =====================================
+         COINS
+      ===================================== */
 
       for(let i = coins.length - 1; i >= 0; i--){
 
@@ -792,7 +832,9 @@
 
     function draw(){
 
-      /* SKY */
+      /* =====================================
+         SKY
+      ===================================== */
 
       let sky = ctx.createLinearGradient(0,0,0,H);
 
@@ -803,34 +845,42 @@
 
       ctx.fillRect(0,0,W,H);
 
-      /* CLOUDS */
+      /* =====================================
+         MOVING CLOUDS
+      ===================================== */
 
       ctx.fillStyle = '#fff';
 
-      drawCloud(100,60);
-      drawCloud(300,90);
-      drawCloud(550,50);
-      drawCloud(750,100);
+      drawCloud((100 - cloudOffset * 0.5) % (W + 200), 60);
+      drawCloud((350 - cloudOffset * 0.5) % (W + 200), 90);
+      drawCloud((650 - cloudOffset * 0.5) % (W + 200), 50);
+      drawCloud((950 - cloudOffset * 0.5) % (W + 200), 100);
 
-      /* MOUNTAINS */
+      /* =====================================
+         MOVING MOUNTAINS
+      ===================================== */
 
       ctx.fillStyle = '#4c8c2b';
 
-      for(let i = 0; i < W; i += 220){
+      for(let i = -220; i < W + 220; i += 220){
+
+        const mx = i - (mountainOffset % 220);
 
         ctx.beginPath();
 
-        ctx.moveTo(i, H - GROUND_H);
+        ctx.moveTo(mx, H - GROUND_H);
 
-        ctx.lineTo(i + 110, H - GROUND_H - 180);
+        ctx.lineTo(mx + 110, H - GROUND_H - 180);
 
-        ctx.lineTo(i + 220, H - GROUND_H);
+        ctx.lineTo(mx + 220, H - GROUND_H);
 
         ctx.fill();
 
       }
 
-      /* GROUND */
+      /* =====================================
+         GROUND
+      ===================================== */
 
       ctx.fillStyle = '#8B4513';
 
@@ -840,7 +890,24 @@
 
       ctx.fillRect(0, H - GROUND_H, W, 15);
 
-      /* BLOCKS */
+      /* MOVING GROUND DETAILS */
+
+      ctx.fillStyle = '#1b5e20';
+
+      for(let i = -40; i < W + 40; i += 40){
+
+        ctx.fillRect(
+          i - (groundOffset % 40),
+          H - GROUND_H + 20,
+          20,
+          6
+        );
+
+      }
+
+      /* =====================================
+         BLOCKS
+      ===================================== */
 
       for(let bx = 150; bx < W; bx += 200){
 
@@ -865,7 +932,9 @@
 
       }
 
-      /* FLAG */
+      /* =====================================
+         FLAG
+      ===================================== */
 
       if(flagVisible){
 
@@ -890,11 +959,15 @@
 
       }
 
-      /* PLAYER */
+      /* =====================================
+         PLAYER
+      ===================================== */
 
       drawMario(mario.x, mario.y);
 
-      /* COINS */
+      /* =====================================
+         COINS
+      ===================================== */
 
       ctx.fillStyle = '#FFD700';
 
@@ -918,7 +991,9 @@
 
       });
 
-      /* ENEMIES */
+      /* =====================================
+         ENEMIES
+      ===================================== */
 
       obstacles.forEach(o => {
 
@@ -1018,4 +1093,5 @@
   </script>
 
 </body>
+
 </html>
