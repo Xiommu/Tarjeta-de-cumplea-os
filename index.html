@@ -1,70 +1,1021 @@
-<!-- REEMPLAZA SOLO LA SECCIÓN START SCREEN POR ESTA -->
+<!doctype html>
+<html lang="es">
 
-<div id="startScreen" class="overlay start-bg">
+<head>
 
-  <!-- NUBES -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <div class="pixel-cloud cloud1"></div>
-  <div class="pixel-cloud cloud2"></div>
-  <div class="pixel-cloud cloud3"></div>
+  <title>Super Manuel Bros 1985</title>
 
-  <div class="overlay start-overlay">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 
-    <div class="text-center px-6">
+  <!-- FUENTE RETRO -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-      <h1
-        data-template-id="game-title"
-        class="game-title text-4xl md:text-6xl mb-4"
-      >
-        SUPER<br>
-        MANUEL BROS
-      </h1>
+  <style>
 
-      <p
-        data-template-id="game-subtitle"
-        class="text-yellow-300 text-sm mb-10 blink"
-      >
-        © 1985 MANUEL ENTERTAINMENT
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Press Start 2P', cursive;
+      margin:0;
+      overflow:hidden;
+      background:#000;
+    }
+
+    .game-wrapper{
+      width:100%;
+      height:100vh;
+      position:relative;
+    }
+
+    canvas{
+      display:block;
+      width:100%;
+      height:100%;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      z-index:10;
+    }
+
+    /* =====================================
+       START SCREEN
+    ===================================== */
+
+    .start-bg{
+      background:
+        linear-gradient(
+          to bottom,
+          #5c94fc 0%,
+          #5c94fc 72%,
+          #c84c0c 72%,
+          #c84c0c 100%
+        );
+
+      overflow:hidden;
+      image-rendering:pixelated;
+    }
+
+    .start-overlay{
+      background:transparent;
+    }
+
+    /* =====================================
+       PIXEL CLOUDS
+    ===================================== */
+
+    .pixel-cloud{
+      position:absolute;
+      width:80px;
+      height:30px;
+      background:white;
+    }
+
+    .pixel-cloud::before,
+    .pixel-cloud::after{
+      content:'';
+      position:absolute;
+      background:white;
+    }
+
+    .pixel-cloud::before{
+      width:30px;
+      height:30px;
+      left:10px;
+      top:-15px;
+    }
+
+    .pixel-cloud::after{
+      width:40px;
+      height:40px;
+      left:35px;
+      top:-20px;
+    }
+
+    .cloud1{
+      top:80px;
+      left:10%;
+    }
+
+    .cloud2{
+      top:150px;
+      right:15%;
+    }
+
+    .cloud3{
+      top:240px;
+      left:40%;
+    }
+
+    /* =====================================
+       TITLE
+    ===================================== */
+
+    .game-title{
+      color:#e52521;
+
+      text-shadow:
+        4px 4px 0 #000,
+        8px 8px 0 #fbd000;
+
+      letter-spacing:4px;
+      line-height:1.4;
+    }
+
+    /* =====================================
+       BUTTONS
+    ===================================== */
+
+    .pixel-btn{
+      cursor:pointer;
+      transition:transform .1s;
+    }
+
+    .pixel-btn:hover{
+      transform:scale(1.05);
+    }
+
+    .pixel-btn:active{
+      transform:scale(.95);
+    }
+
+    .retro-btn{
+      background:#e52521;
+      color:white;
+
+      border:4px solid #000;
+
+      border-radius:0;
+
+      padding:18px 28px;
+
+      box-shadow:6px 6px 0 #000;
+    }
+
+    .retro-btn:hover{
+      background:#ff3b38;
+    }
+
+    /* =====================================
+       PLAYER SELECT
+    ===================================== */
+
+    .player-select{
+      border:4px solid transparent;
+      padding:16px 24px;
+      cursor:pointer;
+      transition:all .2s;
+
+      background:rgba(0,0,0,.3);
+    }
+
+    .player-select.selected{
+      border-color:#ffd700;
+      background:rgba(255,215,0,.15);
+    }
+
+    /* =====================================
+       POPUP
+    ===================================== */
+
+    .achievement-popup{
+      position:absolute;
+      top:50%;
+      left:50%;
+
+      transform:translate(-50%,-50%);
+
+      z-index:20;
+
+      background:#000;
+
+      border:4px solid #ffd700;
+
+      padding:24px 32px;
+
+      text-align:center;
+
+      max-width:500px;
+    }
+
+    /* =====================================
+       HUD
+    ===================================== */
+
+    .hud-box{
+      background:rgba(0,0,0,.7);
+
+      border:3px solid white;
+
+      padding:12px 18px;
+    }
+
+    /* =====================================
+       ANIMATIONS
+    ===================================== */
+
+    @keyframes blink{
+      0%,100%{opacity:1}
+      50%{opacity:0}
+    }
+
+    .blink{
+      animation:blink 1s step-end infinite;
+    }
+
+    @keyframes float{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-8px)}
+    }
+
+    .float-anim{
+      animation:float 2s ease-in-out infinite;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="game-wrapper">
+
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- =====================================
+         START SCREEN
+    ===================================== -->
+
+    <div id="startScreen" class="overlay start-bg">
+
+      <div class="pixel-cloud cloud1"></div>
+      <div class="pixel-cloud cloud2"></div>
+      <div class="pixel-cloud cloud3"></div>
+
+      <div class="overlay start-overlay">
+
+        <div class="text-center px-6">
+
+          <h1
+            class="game-title text-4xl md:text-6xl mb-4"
+          >
+            SUPER<br>
+            MANUEL BROS
+          </h1>
+
+          <p class="text-yellow-300 text-sm mb-10 blink">
+            © 1985 MANUEL ENTERTAINMENT
+          </p>
+
+          <div class="flex flex-col items-center gap-5 mb-10">
+
+            <button
+              id="player1Btn"
+              class="player-select pixel-btn text-white text-sm selected"
+              onclick="selectPlayer(1)"
+            >
+              ▶ 1 PLAYER GAME
+            </button>
+
+            <button
+              id="player2Btn"
+              class="player-select pixel-btn text-white text-sm"
+              onclick="selectPlayer(2)"
+            >
+              2 PLAYER GAME
+            </button>
+
+          </div>
+
+          <button
+            id="startBtn"
+            class="retro-btn pixel-btn text-lg"
+          >
+            START
+          </button>
+
+          <p class="text-white text-xs mt-10 leading-relaxed opacity-90">
+            TOCA LA PANTALLA<br>
+            O PRESIONA ESPACIO
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- =====================================
+         ACHIEVEMENT POPUP
+    ===================================== -->
+
+    <div id="achievementPopup" class="achievement-popup hidden">
+
+      <div class="text-yellow-400 text-3xl mb-6">
+        🪙
+      </div>
+
+      <p id="achievementText" class="text-white text-sm leading-relaxed"></p>
+
+      <p class="text-gray-400 text-xs mt-6">
+        PRESIONA ESPACIO
       </p>
 
-      <div class="flex flex-col items-center gap-5 mb-10">
+    </div>
+
+    <!-- =====================================
+         VICTORY SCREEN
+    ===================================== -->
+
+    <div
+      id="victoryScreen"
+      class="overlay hidden"
+      style="background:rgba(0,0,0,.92);"
+    >
+
+      <div class="text-center float-anim max-w-lg px-6">
+
+        <div class="text-6xl mb-6">
+          🎂
+        </div>
+
+        <h2 class="text-yellow-400 text-3xl mb-8 leading-relaxed">
+          NIVEL 41<br>
+          DESBLOQUEADO
+        </h2>
+
+        <p class="text-white text-sm mb-6 leading-loose">
+          La experiencia aumenta,
+          las aventuras cambian…
+          pero nunca terminan.
+        </p>
+
+        <p class="text-gray-300 text-xs mb-10 leading-loose">
+          Después de los niveles superados,
+          aún quedan mundos por descubrir,
+          sueños por desbloquear
+          y muchas historias por vivir.
+        </p>
+
+        <p class="text-yellow-400 text-xl mb-10">
+          ¡FELIZ CUMPLEAÑOS!
+        </p>
 
         <button
-          id="player1Btn"
-          class="player-select pixel-btn text-white text-sm selected"
-          onclick="selectPlayer(1)"
+          id="restartBtn"
+          class="retro-btn pixel-btn text-sm"
+          style="background:#228B22;"
         >
-          ▶ 1 PLAYER GAME
-        </button>
-
-        <button
-          id="player2Btn"
-          class="player-select pixel-btn text-white text-sm"
-          onclick="selectPlayer(2)"
-        >
-          2 PLAYER GAME
+          JUGAR DE NUEVO
         </button>
 
       </div>
 
-      <button
-        id="startBtn"
-        data-template-id="start-button"
-        class="retro-btn pixel-btn text-lg"
-      >
-        START
-      </button>
+    </div>
 
-      <p
-        data-template-id="instructions-text"
-        class="text-white text-xs mt-10 leading-relaxed opacity-90"
-      >
-        TOCA LA PANTALLA<br>
-        O PRESIONA ESPACIO
-      </p>
+    <!-- =====================================
+         HUD
+    ===================================== -->
+
+    <div
+      id="hud"
+      class="hidden absolute top-4 left-4 right-4 flex justify-between z-5 pointer-events-none"
+    >
+
+      <div class="hud-box flex items-center gap-3">
+
+        <span class="text-yellow-400 text-xl">
+          🪙
+        </span>
+
+        <span
+          id="scoreDisplay"
+          class="text-white text-sm"
+        >
+          0 / 6
+        </span>
+
+      </div>
 
     </div>
 
   </div>
 
-</div>
+  <script>
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let W, H,
+        gameRunning = false,
+        score = 0,
+        frameId,
+        paused = false;
+
+    let mario,
+        coins,
+        obstacles,
+        selectedPlayer = 1;
+
+    let flagVisible = false,
+        flagX = 0,
+        reachedFlag = false;
+
+    const MESSAGES = [
+      "A los 30: Achievement unlocked: pagar cuentas a tiempo.",
+      "A los 31: Nueva habilidad: dormir temprano.",
+      "A los 33: Modo ahorro de energía activado.",
+      "A los 35: Tus reflejos ya no son los mismos.",
+      "A los 38: +10 resistencia lumbar.",
+      "A los 40: Modo veterano desbloqueado."
+    ];
+
+    function resize(){
+      W = canvas.width = canvas.clientWidth;
+      H = canvas.height = canvas.clientHeight;
+    }
+
+    window.addEventListener('resize', resize);
+
+    resize();
+
+    const GROUND_H = 60;
+    const MARIO_W = 40;
+    const MARIO_H = 50;
+
+    let spawnTimer = 0;
+    let coinIndex = 0;
+
+    function selectPlayer(p){
+
+      selectedPlayer = p;
+
+      document
+        .getElementById('player1Btn')
+        .classList.toggle('selected', p === 1);
+
+      document
+        .getElementById('player2Btn')
+        .classList.toggle('selected', p === 2);
+
+    }
+
+    function resetGame(){
+
+      score = 0;
+      coinIndex = 0;
+      spawnTimer = 0;
+      paused = false;
+
+      flagVisible = false;
+      reachedFlag = false;
+
+      mario = {
+        x:80,
+        y:H - GROUND_H - MARIO_H,
+        vy:0,
+        jumping:false,
+        w:MARIO_W,
+        h:MARIO_H
+      };
+
+      coins = [];
+      obstacles = [];
+
+      updateHUD();
+
+    }
+
+    function startGame(){
+
+      document
+        .getElementById('startScreen')
+        .classList.add('hidden');
+
+      document
+        .getElementById('victoryScreen')
+        .classList.add('hidden');
+
+      document
+        .getElementById('hud')
+        .classList.remove('hidden');
+
+      resetGame();
+
+      gameRunning = true;
+
+      loop();
+
+    }
+
+    function showAchievement(idx){
+
+      paused = true;
+
+      document
+        .getElementById('achievementText')
+        .textContent = MESSAGES[idx];
+
+      document
+        .getElementById('achievementPopup')
+        .classList.remove('hidden');
+
+    }
+
+    function dismissAchievement(){
+
+      document
+        .getElementById('achievementPopup')
+        .classList.add('hidden');
+
+      paused = false;
+
+      if(score >= 6){
+
+        flagVisible = true;
+
+        flagX = W + 50;
+
+      }
+
+    }
+
+    function showVictory(){
+
+      gameRunning = false;
+
+      cancelAnimationFrame(frameId);
+
+      document
+        .getElementById('hud')
+        .classList.add('hidden');
+
+      document
+        .getElementById('victoryScreen')
+        .classList.remove('hidden');
+
+    }
+
+    function jump(){
+
+      if(!gameRunning || paused) return;
+
+      if(!mario.jumping){
+
+        mario.vy = -14;
+        mario.jumping = true;
+
+      }
+
+    }
+
+    function handleSpace(){
+
+      if(paused){
+        dismissAchievement();
+      }
+      else{
+        jump();
+      }
+
+    }
+
+    document.addEventListener('keydown', e => {
+
+      if(e.code === 'Space'){
+
+        e.preventDefault();
+
+        handleSpace();
+
+      }
+
+    });
+
+    canvas.addEventListener('click', () => {
+
+      if(paused){
+        dismissAchievement();
+      }
+      else{
+        jump();
+      }
+
+    });
+
+    canvas.addEventListener('touchstart', e => {
+
+      e.preventDefault();
+
+      if(paused){
+        dismissAchievement();
+      }
+      else{
+        jump();
+      }
+
+    }, { passive:false });
+
+    document
+      .getElementById('achievementPopup')
+      .addEventListener('click', dismissAchievement);
+
+    document
+      .getElementById('startBtn')
+      .addEventListener('click', e => {
+
+        e.stopPropagation();
+
+        startGame();
+
+      });
+
+    document
+      .getElementById('restartBtn')
+      .addEventListener('click', e => {
+
+        e.stopPropagation();
+
+        startGame();
+
+      });
+
+    function updateHUD(){
+
+      document
+        .getElementById('scoreDisplay')
+        .textContent = score + ' / 6';
+
+    }
+
+    function loop(){
+
+      if(!gameRunning) return;
+
+      frameId = requestAnimationFrame(loop);
+
+      if(!paused){
+        update();
+      }
+
+      draw();
+
+    }
+
+    function update(){
+
+      mario.vy += 0.7;
+      mario.y += mario.vy;
+
+      if(mario.y >= H - GROUND_H - mario.h){
+
+        mario.y = H - GROUND_H - mario.h;
+
+        mario.vy = 0;
+
+        mario.jumping = false;
+
+      }
+
+      if(flagVisible && !reachedFlag){
+
+        flagX -= 3;
+
+        if(mario.x + mario.w >= flagX){
+
+          reachedFlag = true;
+
+          showVictory();
+
+          return;
+
+        }
+
+      }
+
+      if(!flagVisible){
+
+        spawnTimer++;
+
+        if(coinIndex < 6 && coins.length === 0 && spawnTimer > 80){
+
+          spawnTimer = 0;
+
+          coins.push({
+            x:W,
+            y:H - GROUND_H - 80 - Math.random() * 80,
+            r:18,
+            speed:3 + Math.random()
+          });
+
+        }
+
+        if(spawnTimer % 120 === 0 && Math.random() > 0.4){
+
+          obstacles.push({
+            x:W,
+            y:H - GROUND_H - 40,
+            w:35,
+            h:40,
+            speed:4 + Math.random() * 1.5
+          });
+
+        }
+
+      }
+
+      for(let i = obstacles.length - 1; i >= 0; i--){
+
+        obstacles[i].x -= obstacles[i].speed;
+
+        if(obstacles[i].x < -50){
+          obstacles.splice(i,1);
+        }
+
+      }
+
+      for(let i = coins.length - 1; i >= 0; i--){
+
+        coins[i].x -= coins[i].speed;
+
+        if(coins[i].x < -30){
+
+          coins.splice(i,1);
+
+          continue;
+
+        }
+
+        if(collidesCircle(mario, coins[i])){
+
+          coins.splice(i,1);
+
+          showAchievement(coinIndex);
+
+          coinIndex++;
+
+          score++;
+
+          updateHUD();
+
+        }
+
+      }
+
+    }
+
+    function collidesCircle(rect, c){
+
+      let nearX = Math.max(rect.x, Math.min(c.x, rect.x + rect.w));
+      let nearY = Math.max(rect.y, Math.min(c.y, rect.y + rect.h));
+
+      return (
+        (c.x - nearX) ** 2 +
+        (c.y - nearY) ** 2
+      ) < c.r * c.r;
+
+    }
+
+    function draw(){
+
+      /* SKY */
+
+      let sky = ctx.createLinearGradient(0,0,0,H);
+
+      sky.addColorStop(0, '#5c94fc');
+      sky.addColorStop(1, '#a0d0ff');
+
+      ctx.fillStyle = sky;
+
+      ctx.fillRect(0,0,W,H);
+
+      /* CLOUDS */
+
+      ctx.fillStyle = '#fff';
+
+      drawCloud(100,60);
+      drawCloud(300,90);
+      drawCloud(550,50);
+      drawCloud(750,100);
+
+      /* MOUNTAINS */
+
+      ctx.fillStyle = '#4c8c2b';
+
+      for(let i = 0; i < W; i += 220){
+
+        ctx.beginPath();
+
+        ctx.moveTo(i, H - GROUND_H);
+
+        ctx.lineTo(i + 110, H - GROUND_H - 180);
+
+        ctx.lineTo(i + 220, H - GROUND_H);
+
+        ctx.fill();
+
+      }
+
+      /* GROUND */
+
+      ctx.fillStyle = '#8B4513';
+
+      ctx.fillRect(0, H - GROUND_H, W, GROUND_H);
+
+      ctx.fillStyle = '#228B22';
+
+      ctx.fillRect(0, H - GROUND_H, W, 15);
+
+      /* BLOCKS */
+
+      for(let bx = 150; bx < W; bx += 200){
+
+        ctx.fillStyle = '#c8a030';
+
+        ctx.fillRect(
+          bx,
+          H - GROUND_H - 150,
+          35,
+          35
+        );
+
+        ctx.fillStyle = '#ffd700';
+
+        ctx.font = '20px sans-serif';
+
+        ctx.fillText(
+          '?',
+          bx + 12,
+          H - GROUND_H - 125
+        );
+
+      }
+
+      /* FLAG */
+
+      if(flagVisible){
+
+        ctx.fillStyle = '#666';
+
+        ctx.fillRect(
+          flagX + 10,
+          H - GROUND_H - 140,
+          6,
+          140
+        );
+
+        ctx.fillStyle = '#228B22';
+
+        ctx.beginPath();
+
+        ctx.moveTo(flagX + 16, H - GROUND_H - 140);
+        ctx.lineTo(flagX + 56, H - GROUND_H - 120);
+        ctx.lineTo(flagX + 16, H - GROUND_H - 100);
+
+        ctx.fill();
+
+      }
+
+      /* PLAYER */
+
+      drawMario(mario.x, mario.y);
+
+      /* COINS */
+
+      ctx.fillStyle = '#FFD700';
+
+      coins.forEach(c => {
+
+        ctx.beginPath();
+
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+
+        ctx.fill();
+
+        ctx.fillStyle = '#FFA500';
+
+        ctx.beginPath();
+
+        ctx.arc(c.x, c.y, c.r * 0.6, 0, Math.PI * 2);
+
+        ctx.fill();
+
+        ctx.fillStyle = '#FFD700';
+
+      });
+
+      /* ENEMIES */
+
+      obstacles.forEach(o => {
+
+        ctx.fillStyle = '#8B4513';
+
+        ctx.fillRect(o.x, o.y, o.w, o.h);
+
+        ctx.fillStyle = '#D2691E';
+
+        ctx.fillRect(
+          o.x + 5,
+          o.y + 5,
+          o.w - 10,
+          o.h / 2
+        );
+
+        ctx.fillStyle = '#fff';
+
+        ctx.fillRect(o.x + 8, o.y + 10, 8, 8);
+        ctx.fillRect(o.x + 20, o.y + 10, 8, 8);
+
+        ctx.fillStyle = '#000';
+
+        ctx.fillRect(o.x + 10, o.y + 12, 4, 4);
+        ctx.fillRect(o.x + 22, o.y + 12, 4, 4);
+
+      });
+
+    }
+
+    function drawMario(x, y){
+
+      const hatColor =
+        selectedPlayer === 1
+          ? '#E52521'
+          : '#228B22';
+
+      /* HAT */
+
+      ctx.fillStyle = hatColor;
+
+      ctx.fillRect(x + 5, y, 30, 15);
+      ctx.fillRect(x, y + 5, 40, 10);
+
+      /* FACE */
+
+      ctx.fillStyle = '#FDBCB4';
+
+      ctx.fillRect(x + 5, y + 15, 30, 20);
+
+      /* EYES */
+
+      ctx.fillStyle = '#000';
+
+      ctx.fillRect(x + 12, y + 20, 5, 5);
+      ctx.fillRect(x + 24, y + 20, 5, 5);
+
+      /* MUSTACHE */
+
+      ctx.fillRect(x + 12, y + 28, 16, 4);
+
+      /* BODY */
+
+      ctx.fillStyle = hatColor;
+
+      ctx.fillRect(x + 5, y + 35, 30, 15);
+
+      /* OVERALL */
+
+      ctx.fillStyle = '#0051A8';
+
+      ctx.fillRect(x + 8, y + 38, 24, 12);
+
+      /* BUTTONS */
+
+      ctx.fillStyle = '#FFD700';
+
+      ctx.fillRect(x + 12, y + 42, 4, 4);
+      ctx.fillRect(x + 24, y + 42, 4, 4);
+
+    }
+
+    function drawCloud(x, y){
+
+      ctx.beginPath();
+
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+
+      ctx.arc(x + 25, y - 5, 25, 0, Math.PI * 2);
+
+      ctx.arc(x + 50, y, 20, 0, Math.PI * 2);
+
+      ctx.fill();
+
+    }
+
+  </script>
+
+</body>
+</html>
