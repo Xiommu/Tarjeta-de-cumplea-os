@@ -264,7 +264,7 @@
       <source src="jump.mp3" type="audio/mpeg">
     </audio>
     
-    <audio id="coinSound" loop>
+    <audio id="coinSound">
       <source src="coin.mp3" type="audio/mpeg">
     </audio>
     
@@ -609,9 +609,11 @@
       if(!gameRunning || paused) return;
 
       if(!mario.jumping){
-        const music2 = document.getElementById('jumpSound');
-        music2.volume = 0.4;
-        music2.play();
+        const jumpSound = document.getElementById('jumpSound');
+        jumpSound.pause();
+        jumpSound.currentTime = 0;
+        jumpSound.volume = 0.4;
+        jumpSound.play();
         
         
 
