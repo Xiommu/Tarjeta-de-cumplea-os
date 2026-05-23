@@ -1,413 +1,70 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- REEMPLAZA SOLO LA SECCIÓN START SCREEN POR ESTA -->
 
-  <title>Super Manuel Bros 1985</title>
+<div id="startScreen" class="overlay start-bg">
 
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <!-- NUBES -->
 
-  <!-- Fuente retro -->
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <div class="pixel-cloud cloud1"></div>
+  <div class="pixel-cloud cloud2"></div>
+  <div class="pixel-cloud cloud3"></div>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <div class="overlay start-overlay">
 
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: 'Press Start 2P', cursive;
-      background: #000;
-    }
+    <div class="text-center px-6">
 
-    .game-wrapper {
-      width: 100%;
-      height: 100vh;
-      position: relative;
-    }
-
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
-
-    /* =========================
-       FONDO RETRO MARIO
-    ========================== */
-
-    .start-bg {
-      background:
-        linear-gradient(
-          to bottom,
-          #5c94fc 0%,
-          #5c94fc 72%,
-          #c84c0c 72%,
-          #c84c0c 100%
-        );
-      image-rendering: pixelated;
-      overflow: hidden;
-    }
-
-    .start-overlay {
-      background: transparent;
-    }
-
-    /* =========================
-       NUBES PIXEL
-    ========================== */
-
-    .pixel-cloud {
-      position: absolute;
-      width: 80px;
-      height: 30px;
-      background: white;
-    }
-
-    .pixel-cloud::before,
-    .pixel-cloud::after {
-      content: '';
-      position: absolute;
-      background: white;
-    }
-
-    .pixel-cloud::before {
-      width: 30px;
-      height: 30px;
-      left: 10px;
-      top: -15px;
-    }
-
-    .pixel-cloud::after {
-      width: 40px;
-      height: 40px;
-      left: 35px;
-      top: -20px;
-    }
-
-    .cloud1 {
-      top: 90px;
-      left: 10%;
-    }
-
-    .cloud2 {
-      top: 150px;
-      right: 15%;
-    }
-
-    .cloud3 {
-      top: 250px;
-      left: 40%;
-    }
-
-    /* =========================
-       TITULO RETRO
-    ========================== */
-
-    .game-title {
-      color: #e52521;
-      font-size: clamp(2rem, 6vw, 5rem);
-
-      text-shadow:
-        4px 4px 0 #000,
-        8px 8px 0 #fbd000;
-
-      letter-spacing: 4px;
-      line-height: 1.3;
-    }
-
-    .subtitle {
-      color: #ffd700;
-      font-size: 0.9rem;
-      margin-top: 20px;
-    }
-
-    /* =========================
-       BOTONES RETRO
-    ========================== */
-
-    .pixel-btn {
-      cursor: pointer;
-      transition: transform 0.1s;
-      font-family: inherit;
-    }
-
-    .pixel-btn:hover {
-      transform: scale(1.05);
-    }
-
-    .pixel-btn:active {
-      transform: scale(0.95);
-    }
-
-    .retro-btn {
-      background: #e52521;
-      color: white;
-      border: 4px solid black;
-      border-radius: 0;
-      padding: 18px 28px;
-      font-size: 1rem;
-      box-shadow: 6px 6px 0 #000;
-    }
-
-    .retro-btn:hover {
-      background: #ff3c38;
-    }
-
-    .player-select {
-      border: 4px solid transparent;
-      padding: 14px 20px;
-      color: white;
-      background: rgba(0,0,0,0.4);
-      cursor: pointer;
-    }
-
-    .player-select.selected {
-      border-color: #ffd700;
-      background: rgba(255,215,0,0.15);
-    }
-
-    /* =========================
-       ANIMACIONES
-    ========================== */
-
-    @keyframes blink {
-      0%,100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-
-    .blink {
-      animation: blink 1s step-end infinite;
-    }
-
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .float-anim {
-      animation: float 2s ease-in-out infinite;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* =========================
-       POPUP
-    ========================== */
-
-    .achievement-popup {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 20;
-
-      background: #000;
-      border: 4px solid #ffd700;
-      padding: 24px;
-
-      max-width: 500px;
-      text-align: center;
-    }
-
-    /* =========================
-       HUD
-    ========================== */
-
-    .hud-box {
-      background: rgba(0,0,0,0.7);
-      border: 3px solid white;
-      padding: 10px 18px;
-    }
-
-  </style>
-</head>
-
-<body>
-
-  <div class="game-wrapper">
-
-    <canvas id="gameCanvas"></canvas>
-
-    <!-- =========================
-         START SCREEN
-    ========================== -->
-
-    <div id="startScreen" class="overlay start-bg">
-
-      <!-- NUBES -->
-      <div class="pixel-cloud cloud1"></div>
-      <div class="pixel-cloud cloud2"></div>
-      <div class="pixel-cloud cloud3"></div>
-
-      <div class="overlay start-overlay">
-
-        <div class="text-center px-6">
-
-          <h1 class="game-title">
-            SUPER<br>
-            MANUEL BROS
-          </h1>
-
-          <p class="subtitle blink">
-            © 1985 MANUEL ENTERTAINMENT
-          </p>
-
-          <div class="flex flex-col items-center gap-4 my-10">
-
-            <button
-              id="player1Btn"
-              class="player-select pixel-btn selected"
-              onclick="selectPlayer(1)"
-            >
-              ▶ 1 PLAYER GAME
-            </button>
-
-            <button
-              id="player2Btn"
-              class="player-select pixel-btn"
-              onclick="selectPlayer(2)"
-            >
-              2 PLAYER GAME
-            </button>
-
-          </div>
-
-          <button
-            id="startBtn"
-            class="retro-btn pixel-btn"
-          >
-            START
-          </button>
-
-          <p class="text-white text-xs mt-8 leading-relaxed">
-            TOCA LA PANTALLA<br>
-            O PRESIONA ESPACIO
-          </p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- =========================
-         POPUP
-    ========================== -->
-
-    <div id="achievementPopup" class="achievement-popup hidden">
-
-      <div class="text-yellow-400 text-4xl mb-6">
-        🪙
-      </div>
+      <h1
+        data-template-id="game-title"
+        class="game-title text-4xl md:text-6xl mb-4"
+      >
+        SUPER<br>
+        MANUEL BROS
+      </h1>
 
       <p
-        id="achievementText"
-        class="text-white text-sm leading-relaxed"
-      ></p>
-
-      <p class="text-gray-400 text-xs mt-6">
-        PRESIONA ESPACIO
+        data-template-id="game-subtitle"
+        class="text-yellow-300 text-sm mb-10 blink"
+      >
+        © 1985 MANUEL ENTERTAINMENT
       </p>
 
-    </div>
-
-    <!-- =========================
-         VICTORY SCREEN
-    ========================== -->
-
-    <div
-      id="victoryScreen"
-      class="overlay hidden"
-      style="background: rgba(0,0,0,0.92);"
-    >
-
-      <div class="text-center float-anim max-w-xl px-6">
-
-        <div class="text-6xl mb-6">
-          🎂
-        </div>
-
-        <h2 class="text-yellow-400 text-3xl leading-relaxed mb-8">
-          NIVEL 41<br>
-          DESBLOQUEADO
-        </h2>
-
-        <p class="text-white text-sm leading-loose mb-6">
-          La experiencia aumenta,
-          las aventuras cambian…
-          pero nunca terminan.
-        </p>
-
-        <p class="text-gray-300 text-xs leading-loose mb-10">
-          Después de los niveles superados,
-          aún quedan mundos por descubrir,
-          sueños por desbloquear
-          y muchas historias por vivir.
-        </p>
-
-        <p class="text-yellow-400 text-xl mb-10">
-          ¡FELIZ CUMPLEAÑOS!
-        </p>
+      <div class="flex flex-col items-center gap-5 mb-10">
 
         <button
-          id="restartBtn"
-          class="retro-btn pixel-btn"
-          style="background:#228B22;"
+          id="player1Btn"
+          class="player-select pixel-btn text-white text-sm selected"
+          onclick="selectPlayer(1)"
         >
-          JUGAR DE NUEVO
+          ▶ 1 PLAYER GAME
+        </button>
+
+        <button
+          id="player2Btn"
+          class="player-select pixel-btn text-white text-sm"
+          onclick="selectPlayer(2)"
+        >
+          2 PLAYER GAME
         </button>
 
       </div>
 
-    </div>
+      <button
+        id="startBtn"
+        data-template-id="start-button"
+        class="retro-btn pixel-btn text-lg"
+      >
+        START
+      </button>
 
-    <!-- =========================
-         HUD
-    ========================== -->
-
-    <div
-      id="hud"
-      class="hidden absolute top-4 left-4 right-4 flex justify-between z-5 pointer-events-none"
-    >
-
-      <div class="hud-box flex items-center gap-3">
-
-        <span class="text-yellow-400 text-xl">
-          🪙
-        </span>
-
-        <span
-          id="scoreDisplay"
-          class="text-white text-sm"
-        >
-          0 / 6
-        </span>
-
-      </div>
+      <p
+        data-template-id="instructions-text"
+        class="text-white text-xs mt-10 leading-relaxed opacity-90"
+      >
+        TOCA LA PANTALLA<br>
+        O PRESIONA ESPACIO
+      </p>
 
     </div>
 
   </div>
 
-  <script>
-    // Aquí mantienes tu lógica original del juego
-    // No necesitas cambiar nada del JS todavía.
-  </script>
-
-</body>
-</html>
+</div>
