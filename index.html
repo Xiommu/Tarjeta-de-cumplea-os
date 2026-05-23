@@ -609,8 +609,12 @@
       if(!gameRunning || paused) return;
 
       if(!mario.jumping){
-        document.getElementById('jumpSound').currentTime = 0;
-        document.getElementById('jumpSound').play();
+        const jumpAudio =
+          document
+          .getElementById('jumpSound')
+          .cloneNode();
+        jumpAudio.volume = 0.4;
+        jumpAudio.play();
 
         mario.vy = -14;
         mario.jumping = true;
