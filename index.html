@@ -446,12 +446,12 @@
     ===================================== */
 
     const MESSAGES = [
-      "A los 30: Achievement unlocked: pagar cuentas a tiempo.",
-      "A los 31: Nueva habilidad: dormir temprano.",
-      "A los 33: Modo ahorro de energía activado.",
-      "A los 35: Tus reflejos ya no son los mismos.",
-      "A los 38: +10 resistencia lumbar.",
-      "A los 40: Modo veterano desbloqueado."
+      "A los 30\n\nAchievement unlocked:\n\npagar cuentas a tiempo.",
+      "A los 31\n\nNueva habilidad:\n\ndormir temprano.",
+      "A los 33\n\nModo ahorro de energía activado.",
+      "A los 35\n\nTus reflejos ya no son los mismos.",
+      "A los 38\n\n+10 resistencia lumbar.",
+      "A los 40\n\nModo veterano desbloqueado."
     ];
 
     function resize(){
@@ -722,7 +722,7 @@
 
       if(flagVisible && !reachedFlag){
 
-        flagX -= 3;
+        flagX -= 8;
 
         if(mario.x + mario.w >= flagX){
 
