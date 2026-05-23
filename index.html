@@ -260,6 +260,18 @@
       <source src="music.mp3" type="audio/mpeg">
     </audio>
 
+    <audio id="jumpSound" loop>
+      <source src="jump.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="coinSound" loop>
+      <source src="coin.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="winSound" loop>
+      <source src="win.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- =====================================
          START SCREEN
     ===================================== -->
@@ -576,6 +588,7 @@
 
     function showVictory(){
       document.getElementById('bgMusic').pause();
+      document.getElementById('winSound').play();
 
       gameRunning = false;
 
@@ -596,6 +609,8 @@
       if(!gameRunning || paused) return;
 
       if(!mario.jumping){
+        document.getElementById('jumpSound').currentTime = 0;
+        document.getElementById('jumpSound').play();
 
         mario.vy = -14;
         mario.jumping = true;
@@ -810,6 +825,8 @@
         }
 
         if(collidesCircle(mario, coins[i])){
+          document.getElementById('coinSound').currentTime = 0;
+          document.getElementById('coinSound').play();
 
           coins.splice(i,1);
 
