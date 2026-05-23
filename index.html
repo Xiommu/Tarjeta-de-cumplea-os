@@ -609,11 +609,9 @@
       if(!gameRunning || paused) return;
 
       if(!mario.jumping){
-        const jumpAudio =
-          document
-          .getElementById('jumpSound')
-          .cloneNode();
-        jumpAudio.volume = 0.4;
+        const jumpAudio = document.getElementById('jumpSound');
+        jumpSound.pause();
+        jumpSound.currentTime = 0;
         jumpAudio.play();
 
         mario.vy = -14;
